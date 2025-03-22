@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Product Analyzer</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    input, button {
+      padding: 0.8rem;
+      font-size: 1rem;
+      width: 100%;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    .result {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-top: 1rem;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📦 Bol.com Product Analyzer</h1>
+
+  <input type="text" id="productUrl" placeholder="Plak hier je Bol.com link" />
+  <button onclick="analyzeProduct()">Analyseer product</button>
+
+  <div id="output"></div>
+
+  <script>
+    async function analyzeProduct() {
+      const url = document.getElementById("productUrl").value;
+      const output = document.getElementById("output");
+      output.innerHTML = "⏳ Bezig met analyseren...";
+
+      try {
+        const res = await fetch("http://localhost:3000/analyze", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ url }),
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          output.innerHTML = `<div class="error">❌ ${data.error}</div>`;
+        } else {
+          output.innerHTML = `
+            <div class="result">
+              <p><strong>📝 Titel:</strong> ${data.title}</p>
+              <p><strong>💶 Prijs:</strong> ${data.price}</p>
+              <p><strong>⭐ Reviews:</strong> ${data.reviews}</p>
+              <p><strong>📊 Score:</strong> ${data.score}</p>
+            </div>
+          `;
+        }
+      } catch (err) {
+        output.innerHTML = `<div class="error">⚠️ Er ging iets mis bij het ophalen van de data.</div>`;
+      }
+    }
+  </script>
+
+</body>
+</html>

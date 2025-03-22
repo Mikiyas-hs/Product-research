@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Research Tool</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      background-color: #f9f9f9;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    input[type="number"], input[type="text"] {
+      padding: 0.5rem;
+    }
+
+    button {
+      grid-column: span 6;
+      padding: 0.7rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.8rem;
+      text-align: center;
+    }
+
+    th {
+      background-color: #eee;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🔍 Product Research Tool</h1>
+
+<form id="productForm">
+  <input type="text" placeholder="Productnaam" id="name" required>
+  <input type="number" placeholder="Vraag (1-10)" id="demand" min="1" max="10" required>
+  <input type="number" placeholder="Concurrentie (1-10)" id="competition" min="1" max="10" required>
+  <input type="number" placeholder="Winstmarge (1-10)" id="profit" min="1" max="10" required>
+  <input type="number" placeholder="Trend (1-10)" id="trend" min="1" max="10" required>
+  <input type="number" placeholder="Logistiek gemak (1-10)" id="logistics" min="1" max="10" required>
+  <button type="submit">➕ Voeg product toe</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Vraag</th>
+      <th>Concurrentie</th>
+      <th>Winst</th>
+      <th>Trend</th>
+      <th>Logistiek</th>
+      <th>Score</th>
+    </tr>
+  </thead>
+  <tbody id="productTableBody"></tbody>
+</table>
+
+<script>
+  const form = document.getElementById("productForm");
+  const tableBody = document.getElementById("productTableBody");
+  let products = [];
+
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const demand = +document.getElementById("demand").value;
+    const competition = +document.getElementById("competition").value;
+    const profit = +document.getElementById("profit").value;
+    const trend = +document.getElementById("trend").value;
+    const logistics = +document.getElementById("logistics").value;
+
+    const score = demand + profit + trend + logistics - competition;
+
+    products.push({ name, demand, competition, profit, trend, logistics, score });
+
+    products.sort((a, b) => b.score - a.score); // sorteer op hoogste score
+
+    renderTable();
+    form.reset();
+  });
+
+  function renderTable() {
+    tableBody.innerHTML = "";
+    products.forEach(product => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${product.name}</td>
+        <td>${product.demand}</td>
+        <td>${product.competition}</td>
+        <td>${product.profit}</td>
+        <td>${product.trend}</td>
+        <td>${product.logistics}</td>
+        <td><strong>${product.score}</strong></td>
+      `;
+      tableBody.appendChild(row);
+    });
+  }
+</script>
+
+</body>
+</html>
